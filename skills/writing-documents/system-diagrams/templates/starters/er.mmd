@@ -1,0 +1,31 @@
+%% title: Orders data model
+erDiagram
+  CUSTOMER ||--o{ ORDER : places
+  ORDER ||--|{ ORDER_LINE : contains
+  PRODUCT ||--o{ ORDER_LINE : "appears in"
+  ORDER ||--o| PAYMENT : "paid by"
+  CUSTOMER {
+    uuid id PK
+    string email UK
+    timestamp created_at
+  }
+  ORDER {
+    uuid id PK
+    uuid customer_id FK
+    string status "pending|paid|failed|shipped"
+    numeric total
+  }
+  ORDER_LINE {
+    uuid order_id FK
+    uuid product_id FK
+    int quantity
+  }
+  PRODUCT {
+    uuid id PK
+    string sku UK
+  }
+  PAYMENT {
+    uuid id PK
+    uuid order_id FK
+    string provider_ref
+  }

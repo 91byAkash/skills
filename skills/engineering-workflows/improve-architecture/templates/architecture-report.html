@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Architecture review: REPO NAME</title>
+<style>
+  :root{--ink:#0f172a;--muted:#64748b;--line:#e2e8f0;--leak:#dc2626;--deep:#1e293b}
+  body{margin:0;background:#fafaf9;color:var(--ink);font:15px/1.55 system-ui,sans-serif}
+  main{max-width:1000px;margin:0 auto;padding:40px 24px}
+  header h1{margin:0 0 4px;font-size:24px} header p{margin:0;color:var(--muted)}
+  .legend{display:flex;gap:18px;margin-top:12px;font-size:13px;color:var(--muted)}
+  .legend span::before{content:"";display:inline-block;width:14px;height:10px;margin-right:6px;vertical-align:middle;border:1.5px solid var(--ink)}
+  .legend .seam::before{border-style:dashed} .legend .leak::before{border:0;border-top:2px solid var(--leak);height:0}
+  .legend .deep::before{background:var(--deep)}
+  article{background:#fff;border:1px solid var(--line);border-radius:12px;padding:20px 22px;margin:28px 0}
+  article h2{margin:0 0 8px;font-size:19px}
+  .badges span{display:inline-block;font-size:12px;padding:2px 8px;border-radius:999px;margin-right:6px}
+  .strong{background:#d1fae5;color:#065f46} .explore{background:#fef3c7;color:#92400e} .spec{background:#f1f5f9;color:#334155}
+  .cat{background:#e0e7ff;color:#3730a3}
+  .files{font:13px/1.5 ui-monospace,monospace;color:#334155;margin:10px 0}
+  .ba{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:14px 0}
+  .ba > div{border:1px solid var(--line);border-radius:8px;padding:12px}
+  .ba h3{margin:0 0 8px;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+  .box{border:1.5px solid var(--ink);border-radius:6px;padding:6px 10px;margin:6px 0;font-size:13px}
+  .box.deep{background:var(--deep);color:#fff;padding:14px}
+  .arrow{font-size:12px;color:var(--muted);margin-left:14px} .arrow.leak{color:var(--leak)}
+  .adr{background:#fffbeb;border:1px solid #fcd34d;border-radius:6px;padding:6px 10px;font-size:13px}
+  ul.wins{margin:8px 0 0;padding-left:18px}
+  #top{border-left:4px solid #059669;padding-left:16px}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <h1>Architecture review: REPO NAME</h1>
+  <p>DATE · scope: DIRECTION OR HOT SPOTS</p>
+  <div class="legend"><span>module</span><span class="seam">seam</span><span class="leak">leak</span><span class="deep">deep module</span></div>
+</header>
+
+<!-- Repeat one <article> per candidate, ranked by leverage -->
+<article>
+  <h2>Collapse the order intake pipeline</h2>
+  <div class="badges"><span class="strong">Strong</span><span class="cat">in-process</span></div>
+  <div class="files">src/orders/handler.ts · validator.ts · repo.ts · pricingClient.ts</div>
+  <p class="files">Evidence: 41 / 38 / 35 / 30 commits in 6 months; the four co-change in 27 commits. Deletion test: removing validator.ts concentrates the rules in intake.</p>
+  <div class="ba">
+    <div><h3>Before</h3>
+      <div class="box">OrderHandler</div><div class="arrow">↓ passes OrderDraft</div>
+      <div class="box">OrderValidator</div><div class="arrow">↓ passes OrderDraft</div>
+      <div class="box">OrderRepo</div><div class="arrow leak">↘ calls pricing directly (leak)</div>
+      <div class="box">PricingClient</div>
+    </div>
+    <div><h3>After</h3>
+      <div class="box deep">Order Intake<br><small>one entry point: place an order (interface designed after you pick)</small></div>
+      <div class="arrow">↓ adapter</div>
+      <div class="box">Pricing (live | quote preview)</div>
+    </div>
+  </div>
+  <p><strong>Problem:</strong> placing an order bounces through four shallow modules and pricing leaks into persistence.</p>
+  <p><strong>Solution:</strong> one deep module owns validation, pricing calls, and persistence behind a single function.</p>
+  <ul class="wins"><li>Tests hit one interface</li><li>Pricing stops leaking</li><li>Delete 3 pass-through wrappers</li></ul>
+  <!-- <p class="adr">Contradicts ADR-0007, worth reopening because ...</p> -->
+</article>
+
+<section id="top">
+  <h2>Top recommendation</h2>
+  <p>Start with <strong>CANDIDATE</strong> because REASON (churn, co-change, test gain).</p>
+</section>
+</main>
+</body>
+</html>

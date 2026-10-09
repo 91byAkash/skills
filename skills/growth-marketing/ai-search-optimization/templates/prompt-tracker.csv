@@ -1,0 +1,2 @@
+prompt_id,intent_stage,prompt,engine,run_date,run_no,cited,mentioned,recommended,framing,position,competitors_named,cited_urls,notes
+P01,solution,best expense software for a 20-person agency,chatgpt-search,2026-10-08,1,0,1,0,neutral,4,"Brand A; Brand B","reviewsite.example/expense; brand-a.example",listed last with no detail

@@ -1,0 +1,5 @@
+directory,tier,url,category,fit,status,submitted,live_url,link_rel,variant,notes
+Example launch platform,1-launch,https://launch-platform.example/submit,Launch,strong,todo,,,,launch-outcome,anchor event; schedule Tue-Thu
+Example software alternatives site,2-software,https://alternatives.example/add,Software,strong,todo,,,,software-alternative,
+Example review site,2-software,https://reviews.example/vendors,Reviews,strong,todo,,,,review-roi,only after 20 review-ready users
+Example AI tools directory,3-ai,https://ai-tools.example/submit,AI,weak,skipped,,,,,product is not AI-first

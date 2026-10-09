@@ -1,0 +1,18 @@
+{
+  "title": "Creative review: [campaign], round [n]",
+  "note": "Pick up to 3 concepts to produce. Grounding = the source the claim or hook came from.",
+  "concepts": [
+    {
+      "name": "[Concept name, e.g. Month-end dread]",
+      "format": "[static | carousel | video 9:16 | UGC]",
+      "stage": "[cold | warm | retargeting]",
+      "primary_text": "[Primary text as it will run]",
+      "headlines": ["[Headline 1]", "[Headline 2]"],
+      "frames": [
+        {"label": "Frame 1 / hook", "visual": "[What the viewer sees]", "headline": "[On-screen text]"},
+        {"label": "Frame 2", "image": "[optional path or URL to a mockup]"}
+      ],
+      "grounding": "[Source: review quote, call note, winning ad ID, with date]"
+    }
+  ]
+}

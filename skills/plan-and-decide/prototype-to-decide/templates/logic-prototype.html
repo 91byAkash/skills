@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>PROTOTYPE - replace with the question</title>
+<style>
+  body{font:15px/1.5 system-ui,sans-serif;max-width:920px;margin:32px auto;padding:0 16px;color:#1f2937}
+  .banner{background:#fef3c7;border:1px solid #f59e0b;padding:6px 10px;border-radius:6px;font-size:13px}
+  h1{font-size:22px;margin:12px 0 4px} .q{color:#4b5563;margin:0 0 20px}
+  .panel{border:1px solid #e5e7eb;border-radius:8px;padding:12px 16px;margin:12px 0}
+  dl{display:grid;grid-template-columns:180px 1fr;gap:4px 12px;margin:0} dt{color:#6b7280}
+  dd{margin:0;font-weight:600} dd.changed{background:#dbeafe;border-radius:4px}
+  button{margin:4px 6px 4px 0;padding:6px 12px;border:1px solid #2563eb;background:#fff;color:#2563eb;border-radius:6px;cursor:pointer}
+  button:hover{background:#eff6ff} .log{font-size:13px;color:#6b7280;white-space:pre-line}
+  .tabs button.active{background:#2563eb;color:#fff}
+</style>
+</head>
+<body>
+<div class="banner">Throwaway prototype. Logic module below is the only part worth keeping.</div>
+<h1>Refunds after partial shipment</h1>
+<p class="q">Question: can an order be refunded after some items shipped, and for how much?</p>
+
+<div class="panel"><strong>Current state</strong><dl id="state"></dl></div>
+<div class="panel"><strong>Actions (any order)</strong><div id="actions"></div><div class="log" id="log"></div></div>
+<div class="panel"><strong>Guided scenarios</strong><div class="tabs" id="tabs"></div><div id="scenario"></div></div>
+
+<script>
+// ---------- Pure logic module: no DOM below this line until the PAGE section ----------
+const Logic = (() => {
+  const initial = { status: "placed", items: { A: 30, B: 20, C: 10 }, shipped: [], refunded: [], shippingFee: 9, refundTotal: 0 };
+  function step(state, action) {
+    const s = structuredClone(state);
+    switch (action.type) {
+      case "ship":
+        if (s.status === "cancelled") return { state, error: "Order is cancelled." };
+        if (s.shipped.includes(action.item)) return { state, error: "Item already shipped." };
+        if (s.refunded.includes(action.item)) return { state, error: "Item was refunded; nothing to ship." };
+        s.shipped.push(action.item);
+        s.status = s.shipped.length + s.refunded.length === Object.keys(s.items).length ? "shipped" : "partially shipped";
+        return { state: s };
+      case "refund":
+        if (s.status === "cancelled") return { state, error: "Order is cancelled; already fully refunded." };
+        if (s.shipped.includes(action.item)) return { state, error: "Item already shipped; needs a return, not a refund." };
+        if (s.refunded.includes(action.item)) return { state, error: "Item already refunded." };
+        s.refunded.push(action.item);
+        s.refundTotal += s.items[action.item];
+        if (s.shipped.length + s.refunded.length === Object.keys(s.items).length) s.status = s.shipped.length ? "shipped" : "refunded";
+        return { state: s };
+      case "cancel":
+        if (s.shipped.length) return { state, error: "Cannot cancel: items already shipped." };
+        s.status = "cancelled"; s.refundTotal = Object.values(s.items).reduce((a, b) => a + b, 0) + s.shippingFee;
+        return { state: s };
+      default: return { state, error: "Unknown action" };
+    }
+  }
+  return { initial, step };
+})();
+
+// ---------- PAGE (throwaway) ----------
+let state = Logic.initial, prev = state;
+const actions = [
+  { label: "Ship item A", a: { type: "ship", item: "A" } },
+  { label: "Ship item B", a: { type: "ship", item: "B" } },
+  { label: "Ship item C", a: { type: "ship", item: "C" } },
+  { label: "Refund item B", a: { type: "refund", item: "B" } },
+  { label: "Refund item C", a: { type: "refund", item: "C" } },
+  { label: "Cancel order", a: { type: "cancel" } },
+];
+const scenarios = [
+  // steps are indexes into actions[]; each scenario starts from Logic.initial
+  { name: "Happy path", text: "Ship everything. Nothing to refund.", steps: [0, 1, 2] },
+  { name: "Partial refund", text: "Ship A, then refund B and C. Watch the refund total: is shipping included?", steps: [0, 3, 4] },
+  { name: "Illegal cancel", text: "Ship A, then try to cancel. This should be rejected.", steps: [0, 5] },
+];
+function dispatch(i) {
+  const r = Logic.step(state, actions[i].a);
+  prev = state; state = r.state;
+  document.getElementById("log").textContent = (r.error ? "Rejected: " + r.error : "Done: " + actions[i].label);
+  render();
+}
+function render() {
+  const fields = { "Status": state.status, "Shipped": state.shipped.join(", ") || "none", "Refunded": state.refunded.join(", ") || "none", "Refund total": "$" + state.refundTotal };
+  const before = { "Status": prev.status, "Shipped": prev.shipped.join(", ") || "none", "Refunded": prev.refunded.join(", ") || "none", "Refund total": "$" + prev.refundTotal };
+  document.getElementById("state").innerHTML = Object.entries(fields).map(([k, v]) =>
+    `<dt>${k}</dt><dd class="${before[k] !== v ? "changed" : ""}">${v}</dd>`).join("");
+}
+document.getElementById("actions").innerHTML = actions.map((x, i) => `<button onclick="dispatch(${i})">${x.label}</button>`).join("") +
+  `<button onclick="state=Logic.initial;prev=state;render()">Reset</button>`;
+function showScenario(n) {
+  document.querySelectorAll("#tabs button").forEach((b, i) => b.classList.toggle("active", i === n));
+  const sc = scenarios[n];
+  state = Logic.initial; prev = state; render(); document.getElementById("log").textContent = "Scenario reset to the initial state.";
+  document.getElementById("scenario").innerHTML = `<p>${sc.text}</p>` + sc.steps.map((s, k) => `<button onclick="dispatch(${s})">${k + 1}. ${actions[s].label}</button>`).join("");
+}
+document.getElementById("tabs").innerHTML = scenarios.map((s, i) => `<button onclick="showScenario(${i})">${s.name}</button>`).join("");
+showScenario(0); render();
+</script>
+</body>
+</html>

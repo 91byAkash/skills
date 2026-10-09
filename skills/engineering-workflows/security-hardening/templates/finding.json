@@ -1,0 +1,43 @@
+{
+  "run": {
+    "target": "api/",
+    "source_ref": "0123abcd",
+    "profile": "standard",
+    "scope": ["api/**"],
+    "status": "complete"
+  },
+  "findings": [
+    {
+      "id": "F-001",
+      "state": "confirmed",
+      "title": "Cross-tenant invoice read via GET /invoices/:id",
+      "attack_class": "object-level authorization",
+      "classification": { "cwe": "CWE-639", "owasp": "A01:2025 Broken Access Control" },
+      "location": [{ "path": "api/routes/invoices.ts", "line": 42 }],
+      "principal": "authenticated user in another tenant",
+      "input": "invoice id path parameter",
+      "intended_control": "tenant ownership check",
+      "result": "reads full invoice of another tenant",
+      "proof": { "kind": "integration-test", "ref": "api/test/invoices.idor.test.ts" },
+      "severity": "high",
+      "invariant": "invoice queries are scoped by the caller's tenantId",
+      "fix": "query by { id, tenantId: req.user.tenantId }; return 404 on miss",
+      "regression_test": "api/test/invoices.idor.test.ts"
+    },
+    {
+      "id": "N-001",
+      "state": "needs_validation",
+      "title": "Host header may influence password reset links",
+      "location": [{ "path": "api/auth/reset.ts", "line": 18 }],
+      "missing_fact": "whether the edge proxy overwrites the Host header",
+      "severity": null
+    },
+    {
+      "id": "R-001",
+      "state": "rejected",
+      "title": "SQL injection in search",
+      "reason": "query uses bound parameters; proof attempt returned no injection",
+      "severity": null
+    }
+  ]
+}

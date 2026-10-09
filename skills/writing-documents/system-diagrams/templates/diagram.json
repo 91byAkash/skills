@@ -1,0 +1,25 @@
+{
+  "title": "Order platform: checkout path",
+  "caption": "What happens between 'Pay' and the confirmation email",
+  "nodes": [
+    {"id": "psp", "label": "Payment provider", "type": "external", "row": 0, "col": 2},
+    {"id": "shopper", "label": "Shopper", "type": "actor", "row": 1, "col": 0},
+    {"id": "web", "label": "Web storefront", "sub": "Next.js", "type": "client", "row": 1, "col": 1},
+    {"id": "api", "label": "Orders API", "sub": "FastAPI", "type": "service", "row": 1, "col": 2},
+    {"id": "bus", "label": "Event bus", "type": "queue", "row": 1, "col": 3},
+    {"id": "db", "label": "Orders DB", "sub": "PostgreSQL", "type": "store", "row": 2, "col": 2},
+    {"id": "mailer", "label": "Email worker", "type": "job", "row": 2, "col": 3}
+  ],
+  "groups": [
+    {"label": "Private network (eu-west-1)", "members": ["api", "db", "bus", "mailer"], "kind": "trust"}
+  ],
+  "edges": [
+    {"from": "shopper", "to": "web", "label": "clicks Pay"},
+    {"from": "web", "to": "api", "label": "POST /orders"},
+    {"from": "api", "to": "psp", "label": "charge card"},
+    {"from": "api", "to": "db", "label": "insert order", "style": "data"},
+    {"from": "api", "to": "bus", "label": "OrderPaid", "style": "async"},
+    {"from": "bus", "to": "mailer", "label": "consume", "style": "async"}
+  ],
+  "notes": ["Card charges are retried 3 times with backoff before the order is marked failed."]
+}

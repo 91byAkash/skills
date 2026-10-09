@@ -1,0 +1,17 @@
+%% title: Release approval workflow
+flowchart TD
+  start(["PR merged to main"]) --> build["Build and unit tests"]
+  build --> ok{"Tests pass?"}
+  ok -->|no| fix["Notify author, block release"]
+  ok -->|yes| stage["Deploy to staging"]
+  stage --> smoke{"Smoke tests pass?"}
+  smoke -->|no| rollback["Roll back staging"]
+  smoke -->|yes| approve{"Release manager approves?"}
+  approve -->|"no / needs changes"| fix
+  approve -->|yes| prod["Deploy to production<br/>(canary 10%, then 100%)"]
+  prod --> done(["Released"])
+
+  classDef gate fill:#FFF7D6,stroke:#9A6B00,color:#3D2A00
+  classDef bad fill:#FDECEC,stroke:#B42318,color:#5C0F0A
+  class ok,smoke,approve gate
+  class fix,rollback bad

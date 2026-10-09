@@ -1,0 +1,74 @@
+/* Starter design tokens. Replace values with the chosen direction; keep the names. */
+:root {
+  /* color: light theme */
+  --color-ground: #fbfaf7;
+  --color-surface: #ffffff;
+  --color-ink: #1d232b;
+  --color-ink-muted: #5b6573;
+  --color-rule: #e3e0d8;
+  --color-accent: #0f766e;
+  --color-accent-ink: #ffffff;      /* text on accent */
+  --color-success: #15803d;
+  --color-warning: #b45309;
+  --color-danger: #b91c1c;
+  --color-focus: #2563eb;
+
+  /* type */
+  --font-display: "Your Display Face", ui-serif, Georgia, serif;
+  --font-text: "Your Text Face", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --text-xs: 0.8rem;    /* 12.8px at 1.25 from 16 */
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.563rem;
+  --text-2xl: 1.953rem;
+  --text-3xl: 2.441rem;
+  --text-4xl: 3.052rem;
+  --leading-tight: 1.1;
+  --leading-body: 1.55;
+  --measure: 65ch;
+
+  /* space (4px base) */
+  --space-1: 0.25rem; --space-2: 0.5rem; --space-3: 0.75rem; --space-4: 1rem;
+  --space-6: 1.5rem;  --space-8: 2rem;   --space-12: 3rem;   --space-16: 4rem; --space-24: 6rem;
+
+  /* shape and depth */
+  --radius-sm: 6px; --radius-md: 12px; --radius-lg: 20px; --radius-pill: 999px;
+  --shadow-1: 0 1px 2px rgb(29 35 43 / 0.06), 0 1px 1px rgb(29 35 43 / 0.04);
+  --shadow-2: 0 4px 12px rgb(29 35 43 / 0.08);
+  --shadow-3: 0 12px 32px rgb(29 35 43 / 0.12);
+
+  /* motion */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fast: 120ms; --dur-base: 200ms; --dur-slow: 320ms;
+
+  /* layout */
+  --content-max: 1120px;
+  --gutter: clamp(1rem, 4vw, 2rem);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-ground: #12161b;
+    --color-surface: #1a2027;
+    --color-ink: #e8eaed;
+    --color-ink-muted: #a3acb8;
+    --color-rule: #2a323c;
+    --color-accent: #2dd4bf;
+    --color-accent-ink: #0b1215;
+    --shadow-1: none; --shadow-2: none; --shadow-3: none; /* use lighter surfaces for elevation */
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --dur-fast: 0ms; --dur-base: 0ms; --dur-slow: 0ms; }
+}
+
+body {
+  background: var(--color-ground);
+  color: var(--color-ink);
+  font: var(--text-base) / var(--leading-body) var(--font-text);
+}
+:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }

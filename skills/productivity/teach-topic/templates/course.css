@@ -1,0 +1,37 @@
+/* assets/course.css: shared lesson styles */
+:root {
+  --ink: #1f2328; --muted: #59636e; --paper: #fdfcfa; --rule: #e6e2da;
+  --accent: #1d4ed8; --good: #15803d; --bad: #b91c1c; --code-bg: #f4f2ee;
+  --measure: 68ch;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --ink: #e7e9ec; --muted: #a2abb6; --paper: #16191d; --rule: #2b3138;
+          --accent: #8ab4ff; --good: #4ade80; --bad: #f87171; --code-bg: #1f242a; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--paper); color: var(--ink);
+       font: 18px/1.6 Charter, "Iowan Old Style", Georgia, serif; }
+main { max-width: var(--measure); margin: 0 auto; padding: 3rem 1.25rem 5rem; }
+h1, h2, h3 { font-family: ui-sans-serif, system-ui, sans-serif; line-height: 1.2; }
+h1 { font-size: 2rem; margin-bottom: 0.25rem; }
+.goal { color: var(--muted); font-size: 1.05rem; margin-top: 0; }
+section { margin-top: 2.5rem; }
+pre, code { font-family: ui-monospace, Menlo, monospace; font-size: 0.9em; background: var(--code-bg); }
+pre { padding: 1rem; overflow-x: auto; border-radius: 6px; }
+code { padding: 0.1em 0.3em; border-radius: 4px; }
+pre code { padding: 0; background: none; }
+table { border-collapse: collapse; width: 100%; font-size: 0.95rem; }
+th, td { border-bottom: 1px solid var(--rule); padding: 0.4rem 0.6rem; text-align: left; }
+.cite { font-size: 0.85rem; color: var(--muted); }
+.callout { border-left: 3px solid var(--accent); padding: 0.5rem 1rem; background: color-mix(in srgb, var(--accent) 6%, transparent); }
+.quiz { border: 1px solid var(--rule); border-radius: 8px; padding: 1rem 1.25rem; margin: 1rem 0; }
+.quiz button { display: block; width: 100%; text-align: left; margin: 0.4rem 0; padding: 0.6rem 0.8rem;
+               font: inherit; color: inherit; background: transparent; border: 1px solid var(--rule); border-radius: 6px; cursor: pointer; }
+.quiz button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.quiz button[data-result="right"] { border-color: var(--good); }
+.quiz button[data-result="wrong"] { border-color: var(--bad); }
+.quiz .feedback { min-height: 1.6em; margin: 0.5rem 0 0; }
+details { margin: 1rem 0; } summary { cursor: pointer; color: var(--accent); }
+nav.lesson-nav { display: flex; justify-content: space-between; margin-top: 3rem; font-size: 0.95rem; }
+a { color: var(--accent); }
+@media print { .quiz button { border-color: #999; } nav.lesson-nav { display: none; } }

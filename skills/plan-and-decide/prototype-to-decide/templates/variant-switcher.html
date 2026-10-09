@@ -1,0 +1,50 @@
+<!-- Variant switcher (prototype chrome, not part of the design under review).
+     Drop into a page, or port the behaviour to your framework component.
+     Behaviour: reads ?variant=, prev/next wrap, arrow keys cycle unless typing,
+     updates the URL without reload, and is meant to be excluded from production builds. -->
+<style>
+  .variant-switcher{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);z-index:2147483000;
+    display:flex;align-items:center;gap:4px;padding:4px;border-radius:999px;background:rgba(17,17,17,.85);
+    color:#fff;font:13px/1 system-ui,sans-serif;box-shadow:0 6px 20px rgba(0,0,0,.25)}
+  .variant-switcher button{all:unset;cursor:pointer;padding:8px 12px;border-radius:999px}
+  .variant-switcher button:hover,.variant-switcher button:focus-visible{background:rgba(255,255,255,.15)}
+  .variant-switcher .label{padding:0 8px;min-width:120px;text-align:center}
+</style>
+<nav class="variant-switcher" aria-label="Prototype variants">
+  <button type="button" data-dir="-1" aria-label="Previous variant">&larr;</button>
+  <span class="label" aria-live="polite"></span>
+  <button type="button" data-dir="1" aria-label="Next variant">&rarr;</button>
+</nav>
+<script>
+(function () {
+  // Edit: keys and display names of your variants, and how to show one.
+  const VARIANTS = [["A", "Quiet list"], ["B", "Sidebar"], ["C", "Dense table"]];
+  function show(key) {
+    document.querySelectorAll("[data-variant]").forEach(el => { el.hidden = el.dataset.variant !== key; });
+  }
+  const label = document.querySelector(".variant-switcher .label");
+  function current() {
+    const k = new URLSearchParams(location.search).get("variant");
+    const i = VARIANTS.findIndex(v => v[0] === k);
+    return i < 0 ? 0 : i;
+  }
+  function go(i) {
+    const n = (i + VARIANTS.length) % VARIANTS.length;
+    const url = new URL(location.href);
+    url.searchParams.set("variant", VARIANTS[n][0]);
+    history.replaceState(null, "", url);
+    label.textContent = VARIANTS[n][0] + " - " + VARIANTS[n][1];
+    show(VARIANTS[n][0]);
+  }
+  document.querySelectorAll(".variant-switcher button").forEach(b =>
+    b.addEventListener("click", () => go(current() + Number(b.dataset.dir))));
+  document.addEventListener("keydown", e => {
+    if (e.altKey || e.ctrlKey || e.metaKey) return;  // leave browser shortcuts alone
+    const t = e.target;
+    if (t.closest && t.closest("input,textarea,select,[contenteditable]:not([contenteditable=false])")) return;
+    if (e.key === "ArrowLeft") go(current() - 1);
+    if (e.key === "ArrowRight") go(current() + 1);
+  });
+  go(current());
+})();
+</script>

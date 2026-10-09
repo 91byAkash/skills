@@ -1,0 +1,34 @@
+{
+  "skill": "db-migrations",
+  "task_evals": [
+    {
+      "id": 1,
+      "name": "add-not-null-column-large-table",
+      "prompt": "Add a NOT NULL `region` column to `orders` (40M rows, Postgres 15). Default existing rows to 'IN'. We deploy with rolling restarts.",
+      "files": [],
+      "assertions": [
+        "adds the column as nullable first",
+        "backfills in batches of at most 10000 rows",
+        "adds NOT NULL via a validated CHECK constraint or after backfill, not in the same statement as the column",
+        "sets a lock_timeout before DDL",
+        "includes a verification query"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "rename-column-online",
+      "prompt": "Rename users.fullname to users.display_name without downtime.",
+      "files": [],
+      "assertions": [
+        "uses expand/contract (add new, dual write, backfill, switch reads, drop old)",
+        "lists the deploy order across releases"
+      ]
+    }
+  ],
+  "trigger_queries": [
+    { "query": "we need to drop the legacy `status_old` column from invoices, what's the safest way on prod?", "should_trigger": true },
+    { "query": "add an index on orders(created_at), table is huge and we can't lock it", "should_trigger": true },
+    { "query": "this report query takes 9 seconds, can you make it faster?", "should_trigger": false },
+    { "query": "design the Prisma models for a new comments feature", "should_trigger": false }
+  ]
+}

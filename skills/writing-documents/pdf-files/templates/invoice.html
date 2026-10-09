@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Invoice INV-0000</title>
+<style>
+  @page { size: A4; margin: 16mm 16mm 20mm; }
+  body { font-family: "Noto Sans", "DejaVu Sans", Arial, sans-serif; font-size: 10.5pt; color: #1d1d1f; }
+  header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 18mm; }
+  h1 { font-size: 22pt; margin: 0; color: #1F3864; }
+  .muted { color: #6b6b70; }
+  table { width: 100%; border-collapse: collapse; margin-top: 6mm; }
+  th { text-align: left; border-bottom: 1.5pt solid #1F3864; padding: 2mm 1mm; }
+  td { border-bottom: 0.5pt solid #d0d4dc; padding: 2mm 1mm; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  tfoot td { border: none; font-weight: 600; }
+  .break { break-before: page; }
+  /* fixed = repeated on every printed page; keep it inside the page box (a negative offset adds a blank page) */
+  footer { position: fixed; bottom: 0; left: 0; right: 0; font-size: 8.5pt; color: #6b6b70; text-align: center; }
+  main { padding-bottom: 10mm; } /* room so the last rows never sit under the footer */
+</style>
+</head>
+<body>
+<main>
+<header>
+  <div>
+    <h1>Invoice</h1>
+    <div class="muted">INV-0000 · Issued &lt;YYYY-MM-DD&gt; · Due &lt;YYYY-MM-DD&gt;</div>
+  </div>
+  <div style="text-align:right">
+    <strong>&lt;Seller name&gt;</strong><br>&lt;Address line&gt;<br>&lt;Tax ID&gt;
+  </div>
+</header>
+<p><strong>Bill to:</strong> &lt;Customer name&gt;, &lt;address&gt;</p>
+<table>
+  <thead><tr><th>Item</th><th class="num">Qty</th><th class="num">Unit price</th><th class="num">Amount</th></tr></thead>
+  <tbody>
+    <tr><td>&lt;Description&gt;</td><td class="num">1</td><td class="num">0.00</td><td class="num">0.00</td></tr>
+  </tbody>
+  <tfoot>
+    <tr><td colspan="3" class="num">Subtotal</td><td class="num">0.00</td></tr>
+    <tr><td colspan="3" class="num">Tax (&lt;rate&gt;%)</td><td class="num">0.00</td></tr>
+    <tr><td colspan="3" class="num">Total due</td><td class="num">0.00</td></tr>
+  </tfoot>
+</table>
+<p class="muted">Payment: &lt;bank / UPI / link&gt;. Reference the invoice number.</p>
+</main>
+<footer>&lt;Seller name&gt; · &lt;email&gt; · &lt;phone&gt;</footer>
+</body>
+</html>

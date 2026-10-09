@@ -1,0 +1,30 @@
+# [Brand]
+
+> [One-sentence description: what the product is, who it is for, and the main outcome. Example: "Expense management software for agencies and studios with 5-200 people: receipt capture, card controls and accounting sync."]
+
+[2-4 sentences of key facts an assistant should get right: founded year, HQ, customer count, platforms (web, iOS, Android), main integrations, security certifications, pricing model.]
+
+## Product
+- [Product overview](https://example.com/product): what it does and core features
+- [Pricing](https://example.com/pricing.md): plans, prices, limits (plain text)
+- [Integrations](https://example.com/integrations): supported tools
+- [Security](https://example.com/security): certifications and data handling
+
+## Use cases
+- [For agencies](https://example.com/agencies): [one line]
+- [For studios](https://example.com/studios): [one line]
+
+## Comparisons
+- [Brand vs Competitor A](https://example.com/vs/competitor-a): honest comparison, checked [month year]
+
+## Docs
+- [Getting started](https://docs.example.com/start)
+- [API reference](https://docs.example.com/api)
+
+## Company
+- [About](https://example.com/about)
+- [Customers and case studies](https://example.com/customers)
+- [Contact](https://example.com/contact)
+
+## Optional
+- [Full content in one file](https://example.com/llms-full.txt)

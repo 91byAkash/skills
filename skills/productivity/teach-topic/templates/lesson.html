@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>0003 · Running totals with window functions</title>
+  <link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<main>
+  <header>
+    <h1>Running totals</h1>
+    <p class="goal">Goal: write a running total of signups per day with one window function.</p>
+  </header>
+
+  <section>
+    <h2>Warm-up</h2>
+    <div class="quiz" id="warmup-1" data-answer="1">
+      <p>Which clause keeps one row per group and removes the rest?</p>
+      <button data-why="GROUP BY collapses each group into a single row.">GROUP BY with an aggregate</button>
+      <button data-why="A window function keeps every row and adds a column.">An aggregate used with OVER</button>
+      <p class="feedback" aria-live="polite"></p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Example first</h2>
+    <pre><code>SELECT day, signups,
+       SUM(signups) OVER (ORDER BY day) AS running_total
+FROM daily_signups;</code></pre>
+    <table>
+      <tr><th>day</th><th>signups</th><th>running_total</th></tr>
+      <tr><td>Mon</td><td>4</td><td>4</td></tr>
+      <tr><td>Tue</td><td>7</td><td>11</td></tr>
+      <tr><td>Wed</td><td>2</td><td>13</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <h2>What is happening</h2>
+    <p><code>OVER (ORDER BY day)</code> turns <code>SUM</code> into a window function: every row stays, and each row sums the rows from the start up to itself. That set of rows is the <strong>window frame</strong>.</p>
+    <p class="cite">Source: <a href="https://example.org/docs/window-functions">official documentation, window functions</a> (replace with the resource from RESOURCES.md).</p>
+  </section>
+
+  <section>
+    <h2>Practice</h2>
+    <div class="quiz" id="practice-1" data-answer="2">
+      <p>You want a separate running total for each country. What do you add inside OVER?</p>
+      <button data-why="GROUP BY is not allowed inside OVER; it belongs to the whole query.">GROUP BY country ORDER BY day</button>
+      <button data-why="PARTITION BY restarts the frame for each country.">PARTITION BY country ORDER BY day</button>
+      <p class="feedback" aria-live="polite"></p>
+    </div>
+    <p><strong>Your turn:</strong> write the full query for running signups per country, then paste it in our chat.</p>
+    <details><summary>Show one answer (after you try)</summary>
+      <pre><code>SELECT country, day, signups,
+       SUM(signups) OVER (PARTITION BY country ORDER BY day) AS running_total
+FROM daily_signups;</code></pre>
+    </details>
+  </section>
+
+  <section>
+    <h2>Recap</h2>
+    <ul>
+      <li>Window functions keep every row.</li>
+      <li><code>ORDER BY</code> inside <code>OVER</code> makes the total run.</li>
+      <li><code>PARTITION BY</code> restarts it per group.</li>
+    </ul>
+    <p><strong>Read next:</strong> <a href="https://example.org/tutorial/window-functions">the primary tutorial</a> (about 10 minutes).</p>
+    <p class="callout">Anything unclear? Ask me. I am your teacher for this course and can explain any part another way.</p>
+  </section>
+
+  <nav class="lesson-nav">
+    <a href="0002-group-by-review.html">← Previous</a>
+    <a href="../reference/window-functions.html">Reference sheet</a>
+    <a href="0004-lag-and-lead.html">Next →</a>
+  </nav>
+</main>
+<script src="../assets/quiz.js"></script>
+</body>
+</html>

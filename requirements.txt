@@ -1,0 +1,29 @@
+# Python packages used by the scripts in this pack.
+# Install all:          pip install -r requirements.txt
+# Most scripts use only the standard library; these are needed by the
+# document skills (pdf-files, word-documents, excel-spreadsheets, powerpoint-decks) and a few helpers.
+
+# writing-documents/pdf-files
+pypdf>=4.0
+pdfplumber>=0.11
+reportlab>=4.0
+
+# writing-documents/word-documents
+python-docx>=1.1
+
+# writing-documents/excel-spreadsheets
+openpyxl>=3.1
+
+# writing-documents/powerpoint-decks
+python-pptx>=0.6.23
+
+# shared by docx/pptx XML tools
+lxml>=5.0
+
+# page rendering and thumbnails (pdf, docx, xlsx, pptx)
+pypdfium2>=4.0
+Pillow>=10.0
+
+# Optional (install only if you use these skills):
+# playwright>=1.45        # engineering-workflows/browser-testing examples; then: python -m playwright install chromium
+# mcp>=1.2 httpx pydantic # engineering-workflows/build-mcp-server Python template (for the server you build)

@@ -1,0 +1,17 @@
+%% title: Containers (deployable units and stores)
+flowchart LR
+  user(["Customer"]) -->|HTTPS| web["Web storefront<br/>Next.js"]
+  web -->|"REST /orders"| api["Orders API<br/>FastAPI"]
+  subgraph vpc["Private network"]
+    api -->|SQL| db[("Orders DB<br/>PostgreSQL")]
+    api -->|"publishes OrderPaid"| bus[["Event bus"]]
+    bus -->|consumes| worker["Email worker"]
+  end
+  api -->|"charge card"| psp["Payment provider"]
+
+  classDef svc fill:#E8EEFB,stroke:#2B4C9B,color:#14275A
+  classDef store fill:#E6F4EC,stroke:#24784A,color:#0E3B22
+  classDef ext fill:#F3F4F6,stroke:#6B7280,color:#1F2933
+  class web,api,worker svc
+  class db,bus store
+  class psp ext

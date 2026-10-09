@@ -1,0 +1,12 @@
+%% title: Order lifecycle
+stateDiagram-v2
+  [*] --> Pending: order created
+  Pending --> Paid: charge approved
+  Pending --> Failed: declined / timeout
+  Failed --> Pending: customer retries
+  Paid --> Shipped: label printed
+  Shipped --> Delivered: carrier scan
+  Paid --> Refunded: refund issued
+  Delivered --> Refunded: return accepted
+  Delivered --> [*]
+  Refunded --> [*]

@@ -1,0 +1,22 @@
+%% title: Checkout request
+sequenceDiagram
+  autonumber
+  actor C as Customer
+  participant W as Web storefront
+  participant A as Orders API
+  participant P as Payment provider
+  participant D as Orders DB
+  C->>W: Click "Pay"
+  W->>+A: POST /orders (cart, token)
+  A->>D: insert order (status=pending)
+  A->>+P: charge(amount, token)
+  alt charge approved
+    P-->>A: 200 approved
+    A->>D: update status=paid
+    A-->>W: 201 Created
+  else declined or timeout
+    P-->>-A: 402 declined
+    A->>D: update status=failed
+    A-->>-W: 402 Payment required
+  end
+  W-->>C: Confirmation or retry prompt

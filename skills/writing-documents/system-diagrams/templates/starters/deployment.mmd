@@ -1,0 +1,24 @@
+%% title: Production deployment (eu-west-1)
+flowchart TB
+  dns["DNS + CDN"] -->|HTTPS 443| lb["Load balancer"]
+  subgraph cluster["Kubernetes cluster"]
+    lb -->|"HTTP 8080"| web["web (3 pods)"]
+    lb -->|"HTTP 8000"| api["api (4 pods, HPA 4-12)"]
+    api -->|"AMQP"| worker["worker (2 pods)"]
+  end
+  subgraph data["Managed data (private subnets)"]
+    pg[("PostgreSQL 16<br/>primary + replica")]
+    mq[["Message broker"]]
+    s3[("Object storage")]
+  end
+  api -->|"5432, TLS"| pg
+  api -->|"5671, TLS"| mq
+  worker -->|"5671, TLS"| mq
+  worker -->|"HTTPS"| s3
+
+  classDef edge fill:#EDE7FA,stroke:#5B3CA8,color:#2E1B63
+  classDef svc fill:#E8EEFB,stroke:#2B4C9B,color:#14275A
+  classDef store fill:#E6F4EC,stroke:#24784A,color:#0E3B22
+  class dns,lb edge
+  class web,api,worker svc
+  class pg,mq,s3 store

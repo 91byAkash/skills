@@ -1,0 +1,15 @@
+%% title: Analytics data flow (where data goes and who owns each hop)
+flowchart LR
+  app["Product app"] -->|"events, JSON over HTTPS"| collect["Collector"]
+  collect -->|"raw events, hourly"| lake[("Raw bucket")]
+  lake -->|"dbt models, daily"| wh[("Warehouse")]
+  wh -->|"aggregates"| bi["BI dashboards"]
+  wh -->|"PII-free extract"| ml["Churn model"]
+  ml -->|"scores, nightly"| crm["CRM"]
+
+  classDef src fill:#FFF4E5,stroke:#B4590A,color:#5A2D05
+  classDef store fill:#E6F4EC,stroke:#24784A,color:#0E3B22
+  classDef use fill:#E8EEFB,stroke:#2B4C9B,color:#14275A
+  class app,collect src
+  class lake,wh store
+  class bi,ml,crm use

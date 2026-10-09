@@ -1,0 +1,14 @@
+%% title: System context (who uses it, what it depends on)
+flowchart LR
+  customer(["Customer<br/>(web, mobile)"]) -->|"places orders, HTTPS"| system["Order platform"]
+  staff(["Support staff"]) -->|"refunds, back office"| system
+  system -->|"charges cards, REST"| psp["Payment provider"]
+  system -->|"sends email, SMTP API"| mail["Email service"]
+  system -->|"nightly export, SFTP"| erp["Finance ERP"]
+
+  classDef person fill:#FFF4E5,stroke:#B4590A,color:#5A2D05
+  classDef core fill:#1F2A5C,stroke:#1F2A5C,color:#FFFFFF
+  classDef ext fill:#F3F4F6,stroke:#6B7280,color:#1F2933
+  class customer,staff person
+  class system core
+  class psp,mail,erp ext

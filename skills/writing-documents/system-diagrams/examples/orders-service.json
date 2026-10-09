@@ -1,0 +1,24 @@
+{
+  "title": "Orders service: what POST /orders does (commit 871348a)",
+  "caption": "Traced from app/main.py; the storefront that calls it is not in this repository",
+  "nodes": [
+    {"id": "client", "label": "API client", "type": "external", "row": 1, "col": 0},
+    {"id": "api", "label": "Orders API", "sub": "FastAPI, app/main.py", "type": "service", "row": 1, "col": 1, "sources": ["app/main.py:6-17"]},
+    {"id": "psp", "label": "Payment provider", "sub": "psp.example", "type": "external", "row": 0, "col": 1, "sources": ["app/payments.py:3-8"]},
+    {"id": "db", "label": "orders table", "sub": "PostgreSQL via DATABASE_URL", "type": "store", "row": 2, "col": 1, "sources": ["app/db.py:3-7"]},
+    {"id": "bus", "label": "orders exchange", "sub": "RabbitMQ (pika)", "type": "queue", "row": 1, "col": 2, "sources": ["app/events.py:3-5"]},
+    {"id": "mailer", "label": "Receipt mailer", "sub": "worker/mailer.py", "type": "job", "row": 2, "col": 2, "sources": ["worker/mailer.py:4-7"]}
+  ],
+  "edges": [
+    {"from": "client", "to": "api", "label": "POST /orders", "sources": ["app/main.py:8-9"]},
+    {"from": "api", "to": "psp", "label": "charge, retries 5xx x3", "sources": ["app/payments.py:4-7"]},
+    {"from": "api", "to": "db", "label": "upsert status", "style": "data", "sources": ["app/main.py:10-17", "app/db.py:5-7"]},
+    {"from": "api", "to": "bus", "label": "OrderPaid (only if paid)", "style": "async", "sources": ["app/main.py:12-14"]},
+    {"from": "bus", "to": "mailer", "label": "queue order-paid ?", "style": "async", "sources": ["worker/mailer.py:7"]}
+  ],
+  "notes": [
+    "Unknown: the binding from exchange 'orders' / key 'OrderPaid' to queue 'order-paid' is not in this repo (broker config?).",
+    "Possible bug: app/main.py:12 reads result.ok, but charge() returns an httpx response, which has is_success, not ok.",
+    "Status goes pending -> paid | failed in the same request; there is no retry path for failed orders."
+  ]
+}

@@ -1,0 +1,15 @@
+<!-- evaluation.xml: each pair is independent, read-only, multi-step, stable, and has one short answer. -->
+<evaluation>
+  <qa_pair>
+    <question>Among tickets closed between 2026-01-01 and 2026-03-31 tagged "sso", which customer domain filed the most? Answer with the domain only.</question>
+    <answer>northwind.test</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>The oldest ticket tagged "billing-migration" was closed by which agent? Answer with the agent's email.</question>
+    <answer>ops-7@acme.test</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Ticket T-881 was merged into another ticket. What is the ID of the ticket it was merged into?</question>
+    <answer>T-874</answer>
+  </qa_pair>
+</evaluation>
